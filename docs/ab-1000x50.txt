@@ -1,0 +1,42 @@
+This is ApacheBench, Version 2.3 <$Revision: 1879490 $>
+Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
+Licensed to The Apache Software Foundation, http://www.apache.org/
+
+Benchmarking 127.0.0.1 (be patient)
+
+
+Server Software:        mytiny/1.0
+Server Hostname:        127.0.0.1
+Server Port:            10000
+
+Document Path:          /index.html
+Document Length:        85 bytes
+
+Concurrency Level:      50
+Time taken for tests:   0.809 seconds
+Complete requests:      1000
+Failed requests:        0
+Total transferred:      203000 bytes
+HTML transferred:       85000 bytes
+Requests per second:    1235.57 [#/sec] (mean)
+Time per request:       40.467 [ms] (mean)
+Time per request:       0.809 [ms] (mean, across all concurrent requests)
+Transfer rate:          244.94 [Kbytes/sec] received
+
+Connection Times (ms)
+              min  mean[+/-sd] median   max
+Connect:        0    0   0.2      0       1
+Processing:     2   39   7.2     42      48
+Waiting:        2   39   7.2     41      48
+Total:          4   39   7.1     42      48
+
+Percentage of the requests served within a certain time (ms)
+  50%     42
+  66%     44
+  75%     44
+  80%     44
+  90%     45
+  95%     46
+  98%     48
+  99%     48
+ 100%     48 (longest request)
