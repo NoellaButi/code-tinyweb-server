@@ -56,9 +56,6 @@ docs/     → screenshots, benchmark results (ab-*.txt)
 Makefile  → build rules
 README.md → this overview
 ```
----
-
-
 
 ---
 
