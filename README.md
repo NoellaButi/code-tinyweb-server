@@ -67,7 +67,8 @@ README.md → this overview
 - Zero-Copy Sendfile for performance
 
 ---
-##🚦 Results (Latest)
+
+## 🚦 Results (Latest)
 - Config: ./wserver -d ./public -p 10000 -t 2 -b 32 (localhost)
 - ab -n 500 -c 50 → 1137 req/s, P50 43 ms, 0 failed
 - ab -n 1000 -c 50 → ~1200 req/s, P50 43 ms, 0 failed
