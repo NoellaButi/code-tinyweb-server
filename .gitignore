@@ -1,0 +1,7 @@
+# build artifacts
+wserver
+*.o
+*.out
+*.log
+*.swp
+.DS_Store
