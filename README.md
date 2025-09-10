@@ -5,6 +5,8 @@ Multithreaded Static File Server with Thread Pool, Bounded Queue, and Safe Paths
 ![GitHub issues](https://img.shields.io/github/issues/NoellaButi/tinyweb-server)
 ![GitHub last commit](https://img.shields.io/github/last-commit/NoellaButi/tinyweb-server)
 ![GitHub license](https://img.shields.io/github/license/NoellaButi/tinyweb-server)
+![GitHub top language](https://img.shields.io/github/languages/top/NoellaButi/tinyweb-server?color=blue&logo=c)
+![Build with Make](https://img.shields.io/badge/build-Make-blue?logo=gnu)
 
 **Author:** Noëlla Buti
 
