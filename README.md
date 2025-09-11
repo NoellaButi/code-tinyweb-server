@@ -1,27 +1,31 @@
-# Tiny Web Server — wserver 🌐⚡  
-Multithreaded Static File Server with Thread Pool, Bounded Queue, and Safe Paths  
+# Tiny Shell — mysh 🐚⚡  
+Custom Unix-like Shell with Built-ins, Aliases, Pipes, and Redirection  
+
+[![Language](https://img.shields.io/badge/language-C-blue.svg)](https://en.wikipedia.org/wiki/C_(programming_language))  
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)  
+[![Build](https://img.shields.io/badge/build-Makefile-orange.svg)](Makefile)  
+
+---
 
 ✨ **Overview**  
-This project implements a multithreaded HTTP/1.0 static file server in C.  
-Originally an Operating Systems assignment, it was extended into a practical, portfolio-ready project.  
+This project implements a lightweight shell (`mysh`) in C.  
+It started as an Operating Systems assignment and was extended into a practical developer tool.  
 
 It demonstrates mastery of:  
-- **Concurrency** with thread pools  
-- **Synchronization** (mutex + condition variables)  
-- **System-level I/O** with `sendfile()`  
-- **Security** via safe path resolution  
+- **Process control** (fork, execvp, wait)  
+- **System calls** (I/O, file descriptors)  
+- **User experience** (history, aliases, configs)  
 
 🛠️ **Workflow**  
-- Main (Producer): accepts client connections, enqueues requests  
-- Worker Threads (Consumers): dequeue requests, serve files  
-- Safe Paths: prevents directory traversal (`..`) via `realpath()`  
-- MIME Detection: detects `.html`, `.css`, `.js`, images, etc.  
-- Zero-Copy Send: efficient file transfer with `sendfile()`  
-- Flags:  
-  - `-d` → docroot  
-  - `-p` → port (default 10000)  
-  - `-t` → number of threads  
-  - `-b` → queue size  
+- Prompt: `user@host:cwd$mysh>` dynamic display  
+- Loop: read → parse → execute → re-prompt  
+- Built-ins: `cd`, `pwd`, `exit`, `export`, `alias`, `unalias`, `which`  
+- Config: loads `~/.myshrc` (aliases, exports, etc.)  
+- Environment: support for `export VAR=value`  
+- History & editing: via GNU Readline (`↑ ↓`, `Ctrl+R`)  
+- External commands: launched via `fork + execvp + wait`  
+- Pipes & redirection: `|`, `<`, `>`, `>>` across multiple stages  
+- Errors: descriptive messages (e.g., *No such directory*)  
 
 📁 **Repository Layout**  
 ```bash
@@ -68,7 +72,8 @@ ab -n 500 -c 50 → ~1137 req/s, P50 43 ms, 0 failed
 ab -n 1000 -c 50 → ~1200 req/s, P50 43 ms, 0 failed
 ```
 
-📜 License
-MIT (see LICENSE)
+📜 **License**
+
+MIT (see [LICENSE](LICENSE))
 
 ---
