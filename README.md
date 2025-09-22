@@ -64,11 +64,68 @@ code-tinyweb-server/
 └─ README.md
 ```
 
-## 📊 Results (Benchmarks)
-```text
-ab -n 500 -c 50  → ~1137 req/s,  P50 43 ms, 0 failed
-ab -n 1000 -c 50 → ~1200 req/s,  P50 43 ms, 0 failed
+📊 Benchmarks (ApacheBench)
+
+Add this block to your README:
+
+## 📊 Benchmarks (ApacheBench)
+
+All runs on localhost against `/index.html` with `-t 8` threads and queue `-b 128` (your machine may differ).
+
+| Run | Requests | Concurrency | RPS (mean) | P50 (ms) | Max (ms) | Failures |
+|-----|---------:|------------:|-----------:|---------:|---------:|---------:|
+| #1  | 1000     | 50          | **1235.6** | **42**   | 48       | 0        |
+| #2  | 500      | 50          | **1146.2** | **43**   | 47       | 0        |
+
+Run #1
+- Requests per second: 1235.57 [#/sec] (mean)
+- Time per request: 40.467 [ms] (mean)
+- P50: 42 ms, max: 48 ms, failures: 0
+
+Run #2
+- Requests per second: 1146.15 [#/sec] (mean)
+- Time per request: 43.624 [ms] (mean)
+- P50: 43 ms, max: 47 ms, failures: 0
+
+
+Reproduce locally:
+```bash
+> # install ApacheBench on Ubuntu/Debian
+> sudo apt-get install -y apache2-utils
+>
+> # start server (example)
+> ./wserver -d ./public -p 10000 -t 8 -b 128 &
+> 
+> # warm-up (optional)
+> ab -n 200 -c 50 http://127.0.0.1:10000/index.html
+>
+> # runs
+> ab -n 1000 -c 50 http://127.0.0.1:10000/index.html
+> ab -n 500  -c 50 http://127.0.0.1:10000/index.html
+>
 ```
+
+## 🖼️ Demo images
+
+Since you have demo (1, 2, 3).png, put them in docs/ and link them like this:
+
+## 🖼️ Demo
+
+<p align="center">
+  <img src="docs/demo1.png" alt="wserver demo 1" width="45%"/>
+  <img src="docs/demo2.png" alt="wserver demo 2" width="45%"/>
+</p>
+
+<p align="center">
+  <img src="docs/demo3.png" alt="wserver demo 3" width="60%"/>
+</p>
+
+
+Or, if you prefer simple Markdown:
+
+![Demo 1](docs/demo1.png)
+![Demo 2](docs/demo2.png)
+![Demo 3](docs/demo3.png)
 
 ## 🔮 Roadmap
 - keep-alive support (HTTP/1.1)
