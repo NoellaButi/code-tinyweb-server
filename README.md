@@ -105,26 +105,12 @@ Reproduce locally:
 >
 ```
 
-## 🖼️ Demo images
-
-Since you have demo (1, 2, 3).png, put them in docs/ and link them like this:
-
 ## 🖼️ Demo
 
-<p align="center">
-  <img src="docs/demo1.png" alt="wserver demo 1" width="45%"/>
-  <img src="docs/demo2.png" alt="wserver demo 2" width="45%"/>
-</p>
-
-<p align="center">
-  <img src="docs/demo3.png" alt="wserver demo 3" width="60%"/>
-</p>
-
-
-Or, if you prefer simple Markdown:
-
 ![Demo 1](docs/demo1.png)
+
 ![Demo 2](docs/demo2.png)
+
 ![Demo 3](docs/demo3.png)
 
 ## 🔮 Roadmap
