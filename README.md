@@ -1,83 +1,82 @@
 # Tiny Web Server — wserver 🌐⚡  
-Multithreaded Static File Server with Thread Pool, Bounded Queue, and Safe Paths  
+Multithreaded Static File Server with Thread Pool, Bounded Queue, and Safe Paths
 
-![Language](https://img.shields.io/badge/language-C-blue.svg) 
-![License: MIT](https://img.shields.io/badge/License-MIT-green.svg) 
-![Build](https://img.shields.io/badge/build-Makefile-orange.svg)  
+![Language](https://img.shields.io/badge/language-C-blue.svg)
+![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)
+![Build](https://img.shields.io/badge/build-Makefile-orange.svg)
+![CI](https://github.com/NoellaButi/code-tinyweb-server/actions/workflows/ci.yml/badge.svg?branch=main)
 
 ---
 
-✨ **Overview**  
-This project implements a multithreaded HTTP/1.0 static file server in C.  
-Originally an Operating Systems assignment, it was extended into a practical, portfolio-ready project.  
+## ✨ Overview
+A compact HTTP/1.0 static file server in C with:
+- **Thread pool** + **bounded request queue**
+- **Safe path resolution** (no `..` traversal)
+- **MIME detection** for common types
+- **Zero-copy** fast path using `sendfile()` when available
 
-It demonstrates mastery of:  
-- **Concurrency** with thread pools  
-- **Synchronization** (mutex + condition variables)  
-- **System-level I/O** with `sendfile()`  
-- **Security** via safe path resolution  
+---
 
-🛠️ **Workflow**  
-- Main (Producer): accepts client connections, enqueues requests  
-- Worker Threads (Consumers): dequeue requests, serve files  
-- Safe Paths: prevents directory traversal (`..`) via `realpath()`  
-- MIME Detection: detects `.html`, `.css`, `.js`, images, etc.  
-- Zero-Copy Send: efficient file transfer with `sendfile()`  
-- Flags:  
-  - `-d` → docroot  
-  - `-p` → port (default 10000)  
-  - `-t` → number of threads  
-  - `-b` → queue size  
+## 🔍 Features
+- HTTP/1.0 responses: `200`, `404`, `405` with headers  
+- Flags:
+  - `-d` → docroot (default: `./public`)
+  - `-p` → port (default: `10000`)
+  - `-t` → number of worker threads (default: `8`)
+  - `-b` → queue size (default: `128`)
+- Thread pool (pthreads) with producer/consumer queue  
+- `realpath()` safe path normalization  
+- Basic MIME map: `.html`, `.css`, `.js`, `.png`, `.jpg`, `.gif`, `.svg`, `.txt`, …
 
-📁 **Repository Layout**  
-```bash
-src/        # server source (wserver.c)
-public/     # static HTML/CSS/JS files
-docs/       # screenshots, benchmarks (ab-*.txt)
-Makefile    # build rules
-README.md   # this overview
-```
+---
 
-🚦 **Demo**
+## 🚦 Quickstart
 
-Build and run:
-
+Build:
 ```bash
 make
+```
+
+Run:
+```bash
 ./wserver -d ./public -p 10000 -t 8 -b 128
 ```
 
-Visit in browser:
-
-```bash
-http://localhost:10000
+Open in a browser:
+```arduino
+http://localhost:10000/
 ```
 
-Fetch with curl:
-
+Or curl:
 ```bash
-
 curl -i http://localhost:10000/
-curl -i http://localhost:10000/products.html
+curl -i http://localhost:10000/does-not-exist.txt   # expect 404
 ```
 
-🔍 **Features**
-
-- Thread Pool + Bounded Queue (pthread mutex + cond vars)
-- Safe Path Resolution (no .. traversal)
-- MIME Types (HTML, CSS, JS, images)
-- HTTP/1.0 Responses (200, 404, 405 with headers)
-- Zero-Copy sendfile for performance
-
-🚦 **Results (Benchmarks)**
-
+## 📁 Repository Layout
 ```bash
-ab -n 500 -c 50 → ~1137 req/s, P50 43 ms, 0 failed
-ab -n 1000 -c 50 → ~1200 req/s, P50 43 ms, 0 failed
+code-tinyweb-server/
+├─ src/         # server source (wserver.c, helpers)
+├─ public/      # static files to serve (index.html, assets/)
+├─ docs/        # screenshots, benchmarks
+├─ tests/       # optional scripts
+├─ Makefile     # gcc + pthread + sendfile
+└─ README.md
 ```
 
-📜 **License**
+## 📊 Results (Benchmarks)
+```text
+ab -n 500 -c 50  → ~1137 req/s,  P50 43 ms, 0 failed
+ab -n 1000 -c 50 → ~1200 req/s,  P50 43 ms, 0 failed
+```
 
-MIT (see [LICENSE](LICENSE))
+## 🔮 Roadmap
+- keep-alive support (HTTP/1.1)
+- Directory listings toggle
+- Access logs + latency histograms
+- Basic cache headers
+
+## 📜 License
+MIT (see LICENSE)
 
 ---
