@@ -59,7 +59,6 @@ code-tinyweb-server/
 ├─ src/         # server source (wserver.c, helpers)
 ├─ public/      # static files to serve (index.html, assets/)
 ├─ docs/        # screenshots, benchmarks
-├─ tests/       # optional scripts
 ├─ Makefile     # gcc + pthread + sendfile
 └─ README.md
 ```
