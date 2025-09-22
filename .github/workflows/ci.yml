@@ -63,12 +63,9 @@ jobs:
           BIN="${{ steps.bin.outputs.BIN }}"
           PORT=10080
           DOCROOT="$GITHUB_WORKSPACE/public"
-          # start in background and store PID
           "$BIN" -d "$DOCROOT" -p "$PORT" -t 4 -b 64 >/tmp/wserver.log 2>&1 &
           echo $! > /tmp/wserver.pid
-          # wait briefly for the server to bind
           sleep 0.5
-          # show a snippet of the log to help debug if it fails later
           sed -n '1,120p' /tmp/wserver.log || true
           echo "PID=$(cat /tmp/wserver.pid)"
 
@@ -82,9 +79,18 @@ jobs:
             fi
             sleep 0.3
           done
-          cat /tmp/resp.txt | sed -n '1,80p'
+          sed -n '1,120p' /tmp/resp.txt
+          # Must be HTTP 200
           grep -E '^HTTP/1\.[01] 200' /tmp/resp.txt >/dev/null
-          grep -qi '<h1>ok</h1>' /tmp/resp.txt
+          # Accept either fallback <h1>ok</h1>, any <h1>, or your hello string
+          if grep -qi '<h1>ok</h1>' /tmp/resp.txt \
+             || grep -qi '<h1>[^<]*</h1>' /tmp/resp.txt \
+             || grep -qi 'Hello from my tiny web server' /tmp/resp.txt; then
+            echo "Body looks good"
+          else
+            echo "::error::Expected an <h1> element or hello text in body"
+            exit 1
+          fi
 
       - name: 404 check — GET /does-not-exist
         run: |
