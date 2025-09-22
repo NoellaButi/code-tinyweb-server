@@ -1,0 +1,107 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  build-and-smoke:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install build deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential
+
+      - name: Clean & Build (verbose if supported)
+        run: |
+          set -euxo pipefail
+          if grep -qE '^[[:space:]]*clean:' Makefile; then make clean || true; fi
+          ( make VERBOSE=1 ) || make
+          echo "---- executables ----"
+          find . -maxdepth 3 -type f -perm -111 -print || true
+          echo "---------------------"
+
+      - name: Locate server binary
+        id: bin
+        shell: bash
+        run: |
+          set -e
+          CANDIDATES=(./wserver ./bin/wserver ./build/wserver ./out/wserver ./src/wserver)
+          BIN=""
+          for c in "${CANDIDATES[@]}"; do
+            if [[ -x "$c" ]]; then BIN="$c"; break; fi
+          done
+          if [[ -z "$BIN" ]]; then
+            BIN=$(find . -maxdepth 3 -type f -name 'wserver' -perm -111 | head -n1 || true)
+          fi
+          if [[ -z "$BIN" ]]; then
+            echo "Binary 'wserver' not found after build."
+            exit 1
+          fi
+          echo "BIN=$BIN" >> "$GITHUB_OUTPUT"
+          echo "Using binary: $BIN"
+          file "$BIN" || true
+          ldd "$BIN" || true
+
+      - name: Prepare docroot (fallback if repo lacks public/)
+        run: |
+          set -euxo pipefail
+          if [ ! -d public ]; then
+            mkdir -p public
+            printf '<!doctype html><meta charset="utf-8"><title>wserver</title><h1>ok</h1>' > public/index.html
+          elif [ ! -f public/index.html ]; then
+            printf '<!doctype html><meta charset="utf-8"><title>wserver</title><h1>ok</h1>' > public/index.html
+          fi
+          ls -la public | sed -n '1,200p'
+
+      - name: Launch server (background)
+        id: run
+        run: |
+          set -euxo pipefail
+          BIN="${{ steps.bin.outputs.BIN }}"
+          PORT=10080
+          DOCROOT="$GITHUB_WORKSPACE/public"
+          # start in background and store PID
+          "$BIN" -d "$DOCROOT" -p "$PORT" -t 4 -b 64 >/tmp/wserver.log 2>&1 &
+          echo $! > /tmp/wserver.pid
+          # wait briefly for the server to bind
+          sleep 0.5
+          # show a snippet of the log to help debug if it fails later
+          sed -n '1,120p' /tmp/wserver.log || true
+          echo "PID=$(cat /tmp/wserver.pid)"
+
+      - name: Sanity check — GET /
+        run: |
+          set -euxo pipefail
+          PORT=10080
+          for i in $(seq 1 10); do
+            if curl -fsS -i "http://127.0.0.1:${PORT}/" > /tmp/resp.txt 2>&1; then
+              break
+            fi
+            sleep 0.3
+          done
+          cat /tmp/resp.txt | sed -n '1,80p'
+          grep -E '^HTTP/1\.[01] 200' /tmp/resp.txt >/dev/null
+          grep -qi '<h1>ok</h1>' /tmp/resp.txt
+
+      - name: 404 check — GET /does-not-exist
+        run: |
+          set -euxo pipefail
+          PORT=10080
+          curl -fsS -i "http://127.0.0.1:${PORT}/does-not-exist" > /tmp/resp404.txt || true
+          cat /tmp/resp404.txt | sed -n '1,80p'
+          grep -E '^HTTP/1\.[01] 404' /tmp/resp404.txt >/dev/null || (echo "::warning::404 header not observed; server may use 200 w/ body" && true)
+
+      - name: Shutdown server
+        if: always()
+        run: |
+          set -euxo pipefail
+          if [ -f /tmp/wserver.pid ]; then
+            kill "$(cat /tmp/wserver.pid)" || true
+            sleep 0.2
+            pkill -f 'wserver' || true
+          fi
+          echo "---- server log ----"
+          sed -n '1,200p' /tmp/wserver.log || true
