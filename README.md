@@ -119,6 +119,6 @@ Reproduce locally:
 - Basic cache headers
 
 ## 📜 License
-MIT (see LICENSE)
+MIT (see [LICENSE](LICENSE))
 
 ---
